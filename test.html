@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <meta charset='UTF-8'>
+    <title>JSelect tests</title>
+    <link rel='stylesheet' href='tests/mocha.css'>
+    <script src='tests/sizzle.js'></script>
+    <script src='jselect.js'></script>
+    <script src='tests/mocha.js'></script>
+    <script src='tests/chai.js'></script>
+    <script>mocha.setup('bdd')</script>
+    <script src='tests/tests.js'</script>
+    <script>
+    window.onload = function() {
+      mocha.run()
+    }
+    </script>
+  </head>
+  <body>
+    <div id='mocha'></div>
+    <script>mocha.run()</script>
+  </body>
+</html>
