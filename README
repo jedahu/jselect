@@ -67,25 +67,21 @@ API
 JSelect exports a single global variable `JSelect` which has the following
 members:
 
-`fill`::
-  `(rootNode, queryMap[, selectorFn])` +
+`fill(rootNode, queryMap[, selectorFn])`::
   The main function. It applies replacements to selected children of a root
   node. It takes a root node, an ordered map from queries to replacements (an
   array of arrays of length 2), and an optional selector function.
 
-`getSelector`::
-  `(selectorFn)` +
+`getSelector(selectorFn)`::
   A function that `fill` uses to find a selector function. It takes a single
   argument which should be a selector function or `null`. If the argument is
   falsy it returns a default selector function, else it returns the argument
   unchanged.
 
-`sizzleSelector`::
-  `(rootNode, query)` +
+`sizzleSelector(rootNode, query)`::
   The default selector function if http://sizzlejs.org[Sizzle] is present.
 
-`defaultCssSelector`::
-  `(rootNode, query)` +
+`defaultCssSelector(rootNode, query)`::
   The default selector function of Sizzle is not present. It uses the browser’s
   `querySelectorAll` function.
 
