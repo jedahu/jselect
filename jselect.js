@@ -4,7 +4,7 @@ jselect.js
 
 Selector functions take a root node, a query, and return a sequence of
 descendent nodes that match the query. This makes it easy to change the selector
-implementation to whatever system is desires (e.g. XPath).
+implementation to whatever system is desired (e.g. XPath).
 .*/
 
 var JSelect = (function(d) {
