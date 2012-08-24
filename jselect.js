@@ -9,7 +9,7 @@ implementation to whatever system is desires (e.g. XPath).
 
 var JSelect = (function(d) {
   /*.
-  [[defaultCssSelector]]
+  .+name:defaultCssSelector[] (rootNode, query) => Array<Node>+
   Two selector functions are provided by JSelect. The first wraps the browser’s
   implementation of `querySelectorAll`.
   .*/
@@ -18,7 +18,7 @@ var JSelect = (function(d) {
   }
 
   /*.
-  [[sizzleSelector]]
+  .+name:sizzleSelector[] (rootNode, query) => Array<Node>+
   The second uses http://sizzlejs.com[Sizzle].
   .*/
   function sizzleSelector(rootNode, query) {
@@ -26,7 +26,7 @@ var JSelect = (function(d) {
   }
 
   /*.
-  [[getSelector]]
+  .+name:getSelector[] (selectorFn|null) => selector+
   If no selector function is provided to <<fill>> and `window.Sizzle` exists,
   <<sizzleSelector>> is used, otherwise <<defaultCssSelector>> is used.
   .*/
@@ -39,7 +39,7 @@ var JSelect = (function(d) {
   }
 
   /*.
-  [[wrapReplacement]]
+  .+name:wrapReplacement[] (r) => Node|null+
   Replacement values can be Nodes or text (which is wrapped in a new Text node).
   .*/
   function wrapReplacement(r) {
@@ -48,7 +48,7 @@ var JSelect = (function(d) {
   }
 
   /*.
-  [[replace]]
+  .+name:replace[] (rep, matchedNode) => replacement|null+
   A replacement can be a value or a function.
   .*/
   function replace(rep, matchedNode) {
@@ -56,7 +56,7 @@ var JSelect = (function(d) {
   }
 
   /*.
-  [[replaceNode]]
+  .+name:replaceNode[] (oldNode, newNode) => oldNode+
   The <<fill>> function uses this helper function to replace one node with
   another.
   .*/
@@ -65,7 +65,7 @@ var JSelect = (function(d) {
   }
 
   /*.
-  [[fill]]
+  .+name:fill[] (rootNode, queryMap, selectorFn) => undefined+
   The `fill` function takes a root node, a map from queries to replacements, and
   an optional selector function. `fill` simply iterates through each query in
   the map and applies the replacement to each matching node. The replacement can
