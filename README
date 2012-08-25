@@ -30,11 +30,20 @@ This code:
 
 [source,js]
 --------------------------------------------------------------------------------
+var worm = document.createElement('name');
+worm.innerText = 'worm';
+
+function convertToFox(elem) {
+  elem.innerText = 'fox';
+  return elem;
+}
+
 JSelect.fill(document.getElementById('example'),
   [['adjective', function(elem) { return elem.innerText.toUpperCase(); }],
-   ['animal:first name', function(elem) { elem.outerHTML = 'fox'; }],
-   ['animal:last name', 'worm'],
-   ['action', function(elem) { elem.innerHTML = 'jumped over'; }]]);
+   ['animal:first name', convertToFox],
+   ['animal:last name', worm],
+   ['action', 'jumped over'],
+   ['color', null]]);
 --------------------------------------------------------------------------------
 
 will produce this output:
@@ -44,9 +53,9 @@ will produce this output:
 <div id='example'>
   The
   <animal>
-    QUICK <color>brown</color> fox
+    QUICK <name>fox</name>
   </animal>
-  <action>jumped over</action>
+  jumped over
   the
   <animal>
     SQUIRMY
@@ -56,8 +65,8 @@ will produce this output:
 --------------------------------------------------------------------------------
 
 Note that replacements can be values or functions, and if functions, they can
-either return a replacement value or modify their argument in-place and return
-`null` or `undefined`.
+either return a replacement value or +null+ or modify their argument in-place
+and return it.
 
 
 
@@ -67,21 +76,21 @@ API
 JSelect exports a single global variable `JSelect` which has the following
 members:
 
-`fill(rootNode, queryMap[, selectorFn])`::
++fill (rootNode, queryMap[, selectorFn]) => undefined+::
   The main function. It applies replacements to selected children of a root
   node. It takes a root node, an ordered map from queries to replacements (an
   array of arrays of length 2), and an optional selector function.
 
-`getSelector(selectorFn)`::
++getSelector (selectorFn|null) => selectorFn+::
   A function that `fill` uses to find a selector function. It takes a single
   argument which should be a selector function or `null`. If the argument is
   falsy it returns a default selector function, else it returns the argument
   unchanged.
 
-`sizzleSelector(rootNode, query)`::
++sizzleSelector (rootNode, query) => Array<Node>+::
   The default selector function if http://sizzlejs.org[Sizzle] is present.
 
-`defaultCssSelector(rootNode, query)`::
++defaultCssSelector (rootNode, query) => Array<Node>+::
   The default selector function of Sizzle is not present. It uses the browser’s
   `querySelectorAll` function.
 

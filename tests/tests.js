@@ -34,8 +34,8 @@ describe('JSelect', function() {
     });
     it('should modify in-place', function() {
       var root = makeRoot('The <verb>quick</verb> brown fox');
-      dfill(root, [['verb', function(elm) { elm.outerText = 'SLOW' }]]);
-      chai.assert.equal(root.innerHTML, 'The SLOW brown fox');
+      dfill(root, [['verb', function(elm) { elm.innerText = 'SLOW'; return elm }]]);
+      chai.assert.equal(root.innerHTML, 'The <verb>SLOW</verb> brown fox');
     });
     it('should replace multiple matches', function() {
       var root = makeRoot('The <adj>little</adj> <adj>squirmy</adj> worm');
@@ -54,6 +54,7 @@ describe('JSelect', function() {
       function outerRepl(elem) {
         var inner = elem.firstElementChild;
         if (inner) inner.className = 'color';
+        return elem;
       }
       var root0 = rootFn(),
           root1 = rootFn();

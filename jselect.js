@@ -2,13 +2,20 @@
 jselect.js
 ==========
 
-Selector functions take a root node, a query, and return a sequence of
-descendent nodes that match the query. This makes it easy to change the selector
-implementation to whatever system is desired (e.g. XPath).
+Selector templating via a caller-defined selector function.
 .*/
-
 var JSelect = (function(d) {
+
+
+
   /*.
+  Selector functions
+  ------------------
+
+  Selector functions take a root node, a query, and return a sequence of
+  descendent nodes that match the query. This makes it easy to change the
+  selector implementation to whatever system is desired (e.g. XPath).
+
   .+name:defaultCssSelector[] (rootNode, query) => Array<Node>+
   Two selector functions are provided by JSelect. The first wraps the browser’s
   implementation of `querySelectorAll`.
@@ -35,45 +42,72 @@ var JSelect = (function(d) {
       (typeof Sizzle !== 'undefined' && sizzleSelector) ||
       (d.querySelectorAll && defaultCssSelector);
     if (selector) return selector;
-    throw new Error('No usable selector function found. Please supply one.');
+    throw new Error(
+        'No usable selector function found. Please supply one.');
   }
 
+
+
   /*.
-  .+name:wrapReplacement[] (r) => Node|null+
-  Replacement values can be Nodes or text (which is wrapped in a new Text node).
+  Replacement values
+  ------------------
+
+  Each Node matched by a selector query is either replaced or modified in-place.
+
+  A replacement can be a function or a value (+Node+, +String+, +null+).
+
+  +function (matchedNode) => replacementValue+::
+    Will be called with a single argument: the matched Node, and must return a
+    value to replace it with. If the returned value is the matched Node, no
+    replacement will be made. This is for the cases where it makes more sense
+    to modify the matched Node in-place. All other return values are treated as
+    follows:
+
+  +Node+::
+    Used to replace the matched Node.
+
+  +String+::
+    Wrapped in a Text Node and used to replace the matched Node.'
+
+  +null|undefined|false+::
+    Results in deletion of the matched Node.
   .*/
+  function replace(rep, matchedNode) {
+    var value = typeof rep === 'function' ? rep(matchedNode) : rep;
+    if (value !== null && value !== undefined && value !== false) {
+      replaceNode(matchedNode, wrapReplacement(value));
+    }
+    else {
+      removeNode(matchedNode);
+    }
+  }
+
   function wrapReplacement(r) {
-    if (!r) return null;
     return r instanceof Node ? r : d.createTextNode(r);
   }
 
-  /*.
-  .+name:replace[] (rep, matchedNode) => replacement|null+
-  A replacement can be a value or a function.
-  .*/
-  function replace(rep, matchedNode) {
-    return wrapReplacement(typeof rep === 'function' ? rep(matchedNode) : rep);
-  }
-
-  /*.
-  .+name:replaceNode[] (oldNode, newNode) => oldNode+
-  The <<fill>> function uses this helper function to replace one node with
-  another.
-  .*/
   function replaceNode(oldNode, newNode) {
     oldNode.parentNode.replaceChild(newNode, oldNode);
   }
 
-  /*.
-  .+name:fill[] (rootNode, queryMap, selectorFn) => undefined+
-  The `fill` function takes a root node, a map from queries to replacements, and
-  an optional selector function. `fill` simply iterates through each query in
-  the map and applies the replacement to each matching node. The replacement can
-  be either a value, which will simply replace the matched node, or a function,
-  which must take a single node argument and may do one of two things:
+  function removeNode(node) {
+    node.parentNode.removeChild(node);
+  }
 
-  1. return a single node to replace the matched node;
-  2. return `nil`, and modify the matched node in place.
+
+
+  /*.
+  Entry point
+  -----------
+
+  .+name:fill[] (rootNode, queryMap, selectorFn) => undefined+
+  The `fill` function takes a root Node, a map from queries to replacements,
+  and an optional selector function. `fill` simply iterates through each query
+  in the map and applies the replacement to each matching Node. The replacement
+  can be either: a value (+Node|String+) which will simply replace the matched
+  Node; +null|undefined|false+ which will remove the matched Node; or a
+  function which must take the matched Node as its argument and return a single
+  replacement value of +Node|String|null|undefined|false+.
   .*/
   function fill(rootNode, queryMap, selectorFn) {
     var i,
@@ -89,13 +123,17 @@ var JSelect = (function(d) {
       matchedNodes = select(rootNode, query);
       for (i = 0; i < matchedNodes.length; ++i) {
         matchedNode = matchedNodes[i];
-        newNode = replace(replacement, matchedNode);
-        if (newNode) {
-          replaceNode(matchedNode, newNode);
-        }
+        replace(replacement, matchedNode);
       }
     }
   }
+
+
+
+  /*.
+  Exported functions
+  ------------------
+  .*/
 
   return {
     fill: fill,
